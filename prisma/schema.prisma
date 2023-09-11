@@ -12,9 +12,10 @@ model User {
   name          String
   email         String   @unique
   password_hash String
+  phone         String
   avatar        String?
   created_at    DateTime @default(now())
-  pet           pet[]
+  pet           Pet[]
 
   @@map("users")
 }
@@ -25,31 +26,53 @@ model ONG {
   email         String   @unique
   password_hash String
   cep           String
-  address       String
+  street        String
+  number        Int
   city          String
+  country       String
   phone         String
   avatar        String?
   created_at    DateTime @default(now())
-  pet           pet[]
+  pet           Pet[]
 
   @@map("ongs")
 }
 
-model pet {
-  id           String @id @default(uuid())
+model Pet {
+  id           String      @id @default(uuid())
   name         String
+  description  String
   age          Int
   specie       String
   gender       String
-  size         String
-  energy       String
-  independence String
+  size         Int
+  energy       Int
+  independence Int
+  pet_images   PetImages[]
+  pet_care     PetCare[]
 
   user    User   @relation(fields: [user_id], references: [id])
   user_id String
-
-  ONG    ONG    @relation(fields: [ong_id], references: [id])
-  ong_id String
+  ong     ONG    @relation(fields: [ong_id], references: [id])
+  ong_id  String
 
   @@map("pets")
+}
+
+model PetCare {
+  id          String  @id @default(uuid())
+  description String
+  is_active   Boolean
+
+  pet    Pet    @relation(fields: [pet_id], references: [id])
+  pet_id String
+}
+
+model PetImages {
+  id     String @id @default(uuid())
+  path   String
+  pet    Pet    @relation(fields: [pet_id], references: [id], onDelete: Cascade)
+  pet_id String
+
+  @@map("petimgs")
 }
